@@ -8,8 +8,8 @@
 
 class PoemManager {
 public:
-	static PoemManager instance();	// 获取全局唯一实例
-	bool loadFromJson();	// 用于从文件中加载诗歌
+	static PoemManager& instance();	// 获取全局唯一实例
+	bool loadFromJson(const QString filePath);	// 用于从文件中加载诗歌
 	PoemManager(const PoemManager&) = delete;
 	void operator=(const PoemManager&) = delete;
 
@@ -17,5 +17,8 @@ public:
 
 	void clear();
 
+private:
+	PoemManager() = default;
+	QList<Poem> m_poems;
 
 };

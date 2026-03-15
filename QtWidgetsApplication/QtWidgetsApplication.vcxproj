@@ -95,6 +95,7 @@
     <QtRcc Include="QtWidgetsApplication.qrc" />
     <QtUic Include="QtWidgetsApplication.ui" />
     <QtMoc Include="QtWidgetsApplication.h" />
+    <ClCompile Include="PoemManager.cpp" />
     <ClCompile Include="PoemManager.h" />
     <ClCompile Include="QtWidgetsApplication.cpp" />
     <ClCompile Include="main.cpp" />
