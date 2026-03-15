@@ -32,9 +32,13 @@ bool PoemManager::loadFromJson(const QString filePath) {
 
 	for (const auto& item : root)
 	{
-		QString id = QString::fromStdString(item["id"].get<std::string>());
+		int id = item["id"].get<int>();
 		QString title = QString::fromStdString(item["title"].get<std::string>());
-		QString content = QString::fromStdString(item["content"].get<std::string>());
+		QString content;
+		// 遍历 content 数组，把每一句拼起来
+		for (const auto& line : item["content"]) {
+			content += QString::fromStdString(line.get<std::string>()) + "\n";
+		}
 		QString chapter = QString::fromStdString(item["chapter"].get<std::string>());
 		QString section = QString::fromStdString(item["section"].get<std::string>());
 
