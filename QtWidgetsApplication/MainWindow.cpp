@@ -30,8 +30,7 @@ MainWindow::MainWindow(QWidget* parent)
             background-color:white;
         }
     )");
-
-    initUI();
+     
     loadFirstPoem(); // 一打开就显示第一首诗
 }
 
