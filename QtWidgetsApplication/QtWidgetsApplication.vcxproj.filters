@@ -29,12 +29,6 @@
     <QtUic Include="QtWidgetsApplication.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtMoc Include="QtWidgetsApplication.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <ClCompile Include="QtWidgetsApplication.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -90,9 +84,6 @@
     <ClInclude Include="ImageryGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GraphView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ChineseStyle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -117,15 +108,6 @@
     <QtMoc Include="MainWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="ImageryWindow.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="InkDecor.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="ScrollTitle.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="ReadingPage.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -142,6 +124,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="HomePage.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ImageryWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
