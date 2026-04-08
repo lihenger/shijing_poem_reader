@@ -1,24 +1,23 @@
+﻿#pragma once
+
 #include "Poem.h"
-#include "json.hpp"
-#include <Qlist>
+#include <QList>
 #include <QString>
 
 // 单例模式，保证只加载一次文件，其他拓展的数据结构使用指针。
 // 整个程序使用这一份数据。
-
 class PoemManager {
 public:
-	static PoemManager& instance();	// 获取全局唯一实例
-	bool loadFromJson(const QString filePath);	// 用于从文件中加载诗歌
-	PoemManager(const PoemManager&) = delete;
-	void operator=(const PoemManager&) = delete;
+    static PoemManager& instance();                  // 获取全局唯一实例
+    bool loadFromJson(const QString& filePath);      // 从文件加载诗歌
 
-	const QList<Poem>& getAllPoems() const;
+    PoemManager(const PoemManager&) = delete;
+    void operator=(const PoemManager&) = delete;
 
-	void clear();
+    const QList<Poem>& getAllPoems() const;
+    void clear();
 
 private:
-	PoemManager() = default;
-	QList<Poem> m_poems;
-
+    PoemManager() = default;
+    QList<Poem> m_poems;
 };

@@ -26,7 +26,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -96,6 +96,9 @@
     <QtUic Include="MainWindow.ui" />
     <QtUic Include="QtWidgetsApplication.ui" />
     <QtMoc Include="QtWidgetsApplication.h" />
+    <ClCompile Include="GraphView.cpp" />
+    <ClCompile Include="ImageryGraph.cpp" />
+    <ClCompile Include="ImageryWindow.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="PoemManager.cpp" />
     <ClCompile Include="PoemManager.h" />
@@ -103,6 +106,9 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GraphView.h" />
+    <ClInclude Include="ImageryGraph.h" />
+    <QtMoc Include="ImageryWindow.h" />
     <ClInclude Include="json.hpp" />
     <QtMoc Include="MainWindow.h" />
     <ClInclude Include="Poem.h" />
