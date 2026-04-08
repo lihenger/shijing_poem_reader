@@ -62,7 +62,6 @@ void ImageryGraph::initImageryDictionary()
 QStringList ImageryGraph::extractImageryWords(const QString& content) const
 {
     QStringList allWords = m_wordToCategory.keys();
-
     std::sort(allWords.begin(), allWords.end(), [](const QString& a, const QString& b) {
         return a.length() > b.length();
         });
@@ -101,31 +100,21 @@ QStringList ImageryGraph::intersectStringList(const QStringList& a, const QStrin
     return result;
 }
 
-int ImageryGraph::calculateWeight(const QStringList& wordsA,
-    const QStringList& wordsB,
-    const QStringList& categoriesA,
-    const QStringList& categoriesB,
-    QStringList& sharedWords,
-    QStringList& sharedCategories) const
+int ImageryGraph::calculateWeight(const QStringList& wordsA, const QStringList& wordsB,
+    const QStringList& categoriesA, const QStringList& categoriesB,
+    QStringList& sharedWords, QStringList& sharedCategories) const
 {
     sharedWords = intersectStringList(wordsA, wordsB);
     sharedCategories = intersectStringList(categoriesA, categoriesB);
 
     int weight = 0;
-
-    // 1. 相同意象词，权重更高
     weight += sharedWords.size() * 3;
-
-    // 2. 相同意象类别，权重较低
-    // 注意：如果某类别已经因为相同词贡献过权重，这里仍保留类别加分，让“既同词又同类”的关联更强
     weight += sharedCategories.size() * 1;
-
     return weight;
 }
 
 void ImageryGraph::build(const QList<Poem>& poems)
 {
-    m_poems = poems;
     m_vertices.clear();
     m_adjList.clear();
     m_poemIdToIndex.clear();

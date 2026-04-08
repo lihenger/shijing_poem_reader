@@ -92,11 +92,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HistoryPage.cpp" />
+    <ClCompile Include="OtherPage.cpp" />
+    <ClCompile Include="ReadingPage.cpp" />
+    <ClCompile Include="RecitePage.cpp" />
     <QtRcc Include="QtWidgetsApplication.qrc" />
     <QtUic Include="MainWindow.ui" />
     <QtUic Include="QtWidgetsApplication.ui" />
     <QtMoc Include="QtWidgetsApplication.h" />
+    <ClCompile Include="CategoryPage.cpp" />
     <ClCompile Include="GraphView.cpp" />
+    <ClCompile Include="HomePage.cpp" />
     <ClCompile Include="ImageryGraph.cpp" />
     <ClCompile Include="ImageryWindow.cpp" />
     <ClCompile Include="MainWindow.cpp" />
@@ -106,9 +112,15 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="CategoryPage.h" />
     <ClInclude Include="GraphView.h" />
+    <QtMoc Include="HistoryPage.h" />
+    <QtMoc Include="HomePage.h" />
     <ClInclude Include="ImageryGraph.h" />
     <ClInclude Include="ChineseStyle.h" />
+    <QtMoc Include="OtherPage.h" />
+    <QtMoc Include="ReadingPage.h" />
+    <QtMoc Include="RecitePage.h" />
     <QtMoc Include="InkDecor.h" />
     <QtMoc Include="ScrollTitle.h" />
     <QtMoc Include="ImageryWindow.h" />

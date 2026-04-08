@@ -5,7 +5,6 @@
 
 using json = nlohmann::json;
 
-// 获取单例
 PoemManager& PoemManager::instance() {
     static PoemManager manager;
     return manager;
@@ -21,32 +20,34 @@ bool PoemManager::loadFromJson(const QString& filePath) {
     QByteArray data = file.readAll();
     file.close();
 
-    json root = json::parse(data.toStdString(), nullptr, false);
-    if (root.is_discarded()) {
-        qDebug() << "JSON 解析失败";
-        return false;
-    }
+    try {
+        json root = json::parse(data.toStdString());
 
-    m_poems.clear();
+        m_poems.clear();
 
-    for (const auto& item : root) {
-        int id = item["id"].get<int>();
-        QString title = QString::fromStdString(item["title"].get<std::string>());
+        for (const auto& item : root) {
+            int id = item["id"].get<int>();
+            QString title = QString::fromStdString(item["title"].get<std::string>());
 
-        QString content;
-        for (const auto& line : item["content"]) {
-            content += QString::fromStdString(line.get<std::string>()) + "\n";
+            QString content;
+            for (const auto& line : item["content"]) {
+                content += QString::fromStdString(line.get<std::string>()) + "\n";
+            }
+
+            QString chapter = QString::fromStdString(item["chapter"].get<std::string>());
+            QString section = QString::fromStdString(item["section"].get<std::string>());
+
+            Poem poem(id, title, content.trimmed(), chapter, section);
+            m_poems.append(poem);
         }
 
-        QString chapter = QString::fromStdString(item["chapter"].get<std::string>());
-        QString section = QString::fromStdString(item["section"].get<std::string>());
-
-        Poem poem(id, title, content.trimmed(), chapter, section);
-        m_poems.append(poem);
+        qDebug() << "成功加载诗歌数量:" << m_poems.size();
+        return true;
     }
-
-    qDebug() << "成功加载诗歌数量:" << m_poems.size();
-    return true;
+    catch (const std::exception& e) {
+        qDebug() << "JSON 解析失败:" << e.what();
+        return false;
+    }
 }
 
 const QList<Poem>& PoemManager::getAllPoems() const {
