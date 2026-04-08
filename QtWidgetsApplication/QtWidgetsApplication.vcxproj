@@ -92,9 +92,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="TranslationManager.cpp" />
     <ClCompile Include="HistoryPage.cpp" />
     <ClCompile Include="OtherPage.cpp" />
-    <ClCompile Include="ReadingPage.cpp" />
+    <ClCompile Include="ReadingPage.cpp">
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</QtMocFileName>
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
+    </ClCompile>
     <ClCompile Include="RecitePage.cpp" />
     <QtRcc Include="QtWidgetsApplication.qrc" />
     <QtUic Include="MainWindow.ui" />
@@ -113,6 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CategoryPage.h" />
+    <ClInclude Include="TranslationManager.h" />
     <ClInclude Include="GraphView.h" />
     <QtMoc Include="HistoryPage.h" />
     <QtMoc Include="HomePage.h" />
@@ -129,6 +136,7 @@
     <ClInclude Include="Poem.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="resource\translations.json" />
     <None Include="resource\诗经.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

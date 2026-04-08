@@ -1,6 +1,7 @@
 #include "ReadingPage.h"
 #include "ImageryGraph.h"
 #include "PoemManager.h"
+#include "TranslationManager.h"
 #include "ChineseStyle.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -21,6 +22,7 @@ ReadingPage::ReadingPage(QWidget* parent)
     mainLayout->setContentsMargins(20, 20, 20, 20);
     mainLayout->setSpacing(15);
 
+    // 顶部：返回按钮
     QHBoxLayout* topLayout = new QHBoxLayout();
     m_btnReturn = new QPushButton("← 返回");
     m_btnReturn->setFixedSize(100, 40);
@@ -29,9 +31,11 @@ ReadingPage::ReadingPage(QWidget* parent)
     topLayout->addStretch();
     mainLayout->addLayout(topLayout);
 
+    // 中间三栏
     QHBoxLayout* contentLayout = new QHBoxLayout();
     contentLayout->setSpacing(20);
 
+    // 左侧：阅读列表
     m_readingListWidget = new QListWidget();
     m_readingListWidget->setFixedWidth(250);
     m_readingListWidget->setStyleSheet("QListWidget { background: #FFF8F0; border: 1px solid #D2B48C; border-radius: 10px; }"
@@ -39,8 +43,10 @@ ReadingPage::ReadingPage(QWidget* parent)
         "QListWidget::item:selected { background: #D2B48C; color: white; }");
     contentLayout->addWidget(m_readingListWidget);
 
+    // 中间：诗歌内容 + 翻译（可滚动区域）
     QWidget* centerWidget = new QWidget();
     QVBoxLayout* centerLayout = new QVBoxLayout(centerWidget);
+    centerLayout->setSpacing(15);
 
     m_poemTitle = new QLabel();
     m_poemTitle->setStyleSheet("font-size: 28px; font-weight: bold; color: #8B4513; font-family: '楷体';");
@@ -49,6 +55,10 @@ ReadingPage::ReadingPage(QWidget* parent)
     m_poemChapter = new QLabel();
     m_poemChapter->setStyleSheet("font-size: 14px; color: #A0522D;");
     m_poemChapter->setAlignment(Qt::AlignCenter);
+
+    // 原文区域
+    QLabel* originalLabel = new QLabel("【原文】");
+    originalLabel->setStyleSheet("font-size: 16px; font-weight: bold; color: #8B4513; margin-top: 10px;");
 
     QScrollArea* scrollArea = new QScrollArea();
     scrollArea->setWidgetResizable(true);
@@ -59,11 +69,26 @@ ReadingPage::ReadingPage(QWidget* parent)
     m_poemContent->setStyleSheet("QTextEdit { background: #FFFEF5; border: 1px solid #D2B48C; border-radius: 15px; padding: 20px; font-size: 18px; line-height: 2; }");
     scrollArea->setWidget(m_poemContent);
 
+    // 翻译区域
+    QLabel* translationLabel = new QLabel("【现代文翻译】");
+    translationLabel->setStyleSheet("font-size: 16px; font-weight: bold; color: #8B4513; margin-top: 15px;");
+
+    m_translationContent = new QTextEdit();
+    m_translationContent->setReadOnly(true);
+    m_translationContent->setStyleSheet("QTextEdit { background: #F5F0E8; border: 1px solid #D2B48C; border-radius: 15px; padding: 20px; font-size: 16px; line-height: 1.8; color: #3D2B1F; }");
+    m_translationContent->setMaximumHeight(200);
+
+    // 添加所有组件到中间区域
     centerLayout->addWidget(m_poemTitle);
     centerLayout->addWidget(m_poemChapter);
+    centerLayout->addWidget(originalLabel);
     centerLayout->addWidget(scrollArea);
+    centerLayout->addWidget(translationLabel);
+    centerLayout->addWidget(m_translationContent);
+
     contentLayout->addWidget(centerWidget, 2);
 
+    // 右侧：意象 + 猜你喜欢
     QWidget* rightWidget = new QWidget();
     rightWidget->setFixedWidth(280);
     QVBoxLayout* rightLayout = new QVBoxLayout(rightWidget);
@@ -90,6 +115,7 @@ ReadingPage::ReadingPage(QWidget* parent)
 
     mainLayout->addLayout(contentLayout, 1);
 
+    // 底部按钮
     QHBoxLayout* bottomLayout = new QHBoxLayout();
     bottomLayout->setSpacing(20);
     bottomLayout->addStretch();
@@ -109,6 +135,7 @@ ReadingPage::ReadingPage(QWidget* parent)
     bottomLayout->addStretch();
     mainLayout->addLayout(bottomLayout);
 
+    // 连接信号
     connect(m_btnReturn, &QPushButton::clicked, this, &ReadingPage::exitReadingPage);
     connect(m_btnPrev, &QPushButton::clicked, this, &ReadingPage::onPrevClicked);
     connect(m_btnNext, &QPushButton::clicked, this, &ReadingPage::onNextClicked);
@@ -116,6 +143,26 @@ ReadingPage::ReadingPage(QWidget* parent)
     connect(m_btnRemoveFromRecite, &QPushButton::clicked, this, &ReadingPage::onRemoveFromReciteClicked);
     connect(m_recommendList, &QListWidget::itemClicked, this, &ReadingPage::onRecommendClicked);
     connect(m_readingListWidget, &QListWidget::itemClicked, this, &ReadingPage::onReadingListItemClicked);
+}
+
+void ReadingPage::loadTranslation(int poemId)
+{
+    TranslationManager& transManager = TranslationManager::instance();
+
+    if (transManager.hasTranslation(poemId)) {
+        QString translation = transManager.getTranslation(poemId);
+        QString appreciation = transManager.getAppreciation(poemId);
+
+        // 组合翻译和赏析
+        QString content = translation;
+        if (!appreciation.isEmpty()) {
+            content += "\n\n【赏析】\n" + appreciation;
+        }
+        m_translationContent->setText(content);
+    }
+    else {
+        m_translationContent->setText("暂无翻译，敬请期待...");
+    }
 }
 
 void ReadingPage::setReadingList(const QList<int>& readingList, int startIndex)
@@ -150,6 +197,9 @@ void ReadingPage::loadPoem(int index)
         m_poemTitle->setText(poem.title);
         m_poemChapter->setText(poem.chapter + " · " + poem.section);
         m_poemContent->setText(poem.content);
+
+        // 加载翻译
+        loadTranslation(poem.id);
 
         emit addToHistory(poemIdx);
     }

@@ -3,7 +3,9 @@
 #include <QLabel>
 #include <QTextEdit>
 #include <QListWidget>
+#include <QListWidgetItem>
 #include <QPushButton>
+#include <QScrollArea>
 
 class ImageryGraph;
 
@@ -33,16 +35,19 @@ private:
     void loadPoem(int index);
     void updateImageryAndRecommend();
     void highlightCurrentItem();
+    void loadTranslation(int poemId);
 
     QList<int> m_readingList;
     int m_currentIndex;
     ImageryGraph* m_imageryGraph;
 
+    // UI组件
     QPushButton* m_btnReturn;
     QListWidget* m_readingListWidget;
     QLabel* m_poemTitle;
     QLabel* m_poemChapter;
     QTextEdit* m_poemContent;
+    QTextEdit* m_translationContent;
     QListWidget* m_imageryList;
     QListWidget* m_recommendList;
     QPushButton* m_btnPrev;

@@ -73,6 +73,9 @@
     <ClCompile Include="OtherPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TranslationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ReadingPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -93,9 +96,15 @@
     <ClInclude Include="ChineseStyle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TranslationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\诗经.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\translations.json">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
