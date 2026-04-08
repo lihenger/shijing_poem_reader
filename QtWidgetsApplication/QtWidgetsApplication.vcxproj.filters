@@ -72,6 +72,9 @@
     <ClInclude Include="GraphView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ChineseStyle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\诗经.json">
@@ -88,6 +91,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="ImageryWindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="InkDecor.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ScrollTitle.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

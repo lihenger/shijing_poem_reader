@@ -1,14 +1,15 @@
-﻿#include "ImageryWindow.h"
+﻿// ImageryWindow.cpp
+#include "ImageryWindow.h"
 #include "PoemManager.h"
-
-#include <QHBoxLayout>
+#include "ChineseStyle.h"
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 
 ImageryWindow::ImageryWindow(const Poem& currentPoem, QWidget* parent)
     : QWidget(parent), m_currentPoem(currentPoem), m_currentIndex(-1)
 {
     setWindowTitle("意象关联分析");
-    resize(1200, 700);
+    resize(1300, 800);
 
     buildGraphData();
     initUI();
@@ -25,111 +26,110 @@ void ImageryWindow::buildGraphData()
 
 void ImageryWindow::initUI()
 {
-    setStyleSheet(
-        "QWidget { background: #F7F4EF; font-size: 14px; }"
-        "QLabel { color: #333333; }"
-        "QPushButton { background: #8C5A3C; color: white; border: none; border-radius: 5px; padding: 6px 14px; }"
-        "QPushButton:hover { background: #A86C47; }"
-        "QTextEdit, QListWidget { background: white; color: #333333; border: 1px solid #D8C2B8; border-radius: 6px; }"
-    );
+    // 应用国风样式
+    this->setStyleSheet(ChineseStyle::getMainStyle());
 
     QHBoxLayout* mainLayout = new QHBoxLayout(this);
-    mainLayout->setContentsMargins(15, 15, 15, 15);
-    mainLayout->setSpacing(15);
+    mainLayout->setContentsMargins(20, 20, 20, 20);
+    mainLayout->setSpacing(20);
 
-    // ========== 左侧：当前诗歌（缩小） ==========
-    QWidget* leftWidget = new QWidget;
-    QVBoxLayout* leftLayout = new QVBoxLayout(leftWidget);
+    // 左侧：当前诗歌
+    QWidget* leftCard = new QWidget;
+    leftCard->setStyleSheet("background: #FFF8F0; border: 1px solid #D2B48C; border-radius: 15px;");
+    QVBoxLayout* leftLayout = new QVBoxLayout(leftCard);
 
-    QLabel* currentTitle = new QLabel("当前诗歌");
-    currentTitle->setStyleSheet("font-size: 16px; font-weight: bold; color: #4A3426;");
+    QLabel* currentTitle = new QLabel("· 今诗 ·");
+    currentTitle->setStyleSheet("font-family: '楷体', 'KaiTi'; font-size: 18px; color: #8B4513;");
+    currentTitle->setAlignment(Qt::AlignCenter);
 
-    titleLabel = new QLabel;
-    titleLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #4A3426;");
+    m_titleLabel = new QLabel;
+    m_titleLabel->setStyleSheet("font-size: 22px; font-weight: bold; color: #8B4513; font-family: '楷体', 'KaiTi';");
+    m_titleLabel->setAlignment(Qt::AlignCenter);
 
-    authorLabel = new QLabel;
-    authorLabel->setStyleSheet("font-size: 14px; color: #6B5B4D;");
+    m_authorLabel = new QLabel;
+    m_authorLabel->setStyleSheet("font-size: 14px; color: #A0522D; font-family: '楷体', 'KaiTi';");
+    m_authorLabel->setAlignment(Qt::AlignCenter);
 
-    contentText = new QTextEdit;
-    contentText->setReadOnly(true);
+    m_contentText = new QTextEdit;
+    m_contentText->setReadOnly(true);
 
     leftLayout->addWidget(currentTitle);
-    leftLayout->addWidget(titleLabel);
-    leftLayout->addWidget(authorLabel);
-    leftLayout->addWidget(contentText, 1);
+    leftLayout->addWidget(m_titleLabel);
+    leftLayout->addWidget(m_authorLabel);
+    leftLayout->addWidget(m_contentText);
 
-    // ========== 中间：意象类别与相关诗歌 ==========
-    QWidget* middleWidget = new QWidget;
-    QVBoxLayout* middleLayout = new QVBoxLayout(middleWidget);
+    // 中间：意象分析区
+    QWidget* middleCard = new QWidget;
+    middleCard->setStyleSheet("background: #FFF8F0; border: 1px solid #D2B48C; border-radius: 15px;");
+    QVBoxLayout* middleLayout = new QVBoxLayout(middleCard);
 
-    QLabel* categoryTitle = new QLabel("本诗包含的意象类别");
-    categoryTitle->setStyleSheet("font-size: 16px; font-weight: bold;");
-    categoryList = new QListWidget;
+    QLabel* categoryTitle = new QLabel("· 意象类别 ·");
+    categoryTitle->setStyleSheet("font-family: '楷体', 'KaiTi'; font-size: 18px; color: #8B4513;");
+    categoryTitle->setAlignment(Qt::AlignCenter);
 
-    QLabel* categoryResultTitle = new QLabel("包含所选意象类别的诗歌");
-    categoryResultTitle->setStyleSheet("font-size: 16px; font-weight: bold;");
-    categoryResultList = new QListWidget;
+    m_categoryList = new QListWidget;
 
-    similarButton = new QPushButton("意象最接近");
+    m_similarButton = new QPushButton("🎋 寻找意象相近的诗");
+    m_similarButton->setStyleSheet("QPushButton { background: #B8860B; } QPushButton:hover { background: #CD853F; }");
 
-    QLabel* similarTitle = new QLabel("最接近的诗歌");
-    similarTitle->setStyleSheet("font-size: 16px; font-weight: bold;");
-    similarList = new QListWidget;
+    QLabel* similarTitle = new QLabel("· 相近之诗 ·");
+    similarTitle->setStyleSheet("font-family: '楷体', 'KaiTi'; font-size: 18px; color: #8B4513; margin-top: 15px;");
+    similarTitle->setAlignment(Qt::AlignCenter);
+
+    m_similarList = new QListWidget;
 
     middleLayout->addWidget(categoryTitle);
-    middleLayout->addWidget(categoryList, 1);
-    middleLayout->addWidget(categoryResultTitle);
-    middleLayout->addWidget(categoryResultList, 1);
-    middleLayout->addWidget(similarButton);
+    middleLayout->addWidget(m_categoryList);
+    middleLayout->addWidget(m_similarButton);
     middleLayout->addWidget(similarTitle);
-    middleLayout->addWidget(similarList, 1);
+    middleLayout->addWidget(m_similarList);
 
-    // ========== 右侧：相关诗歌内容预览 ==========
-    QWidget* rightWidget = new QWidget;
-    QVBoxLayout* rightLayout = new QVBoxLayout(rightWidget);
+    // 右侧：预览区
+    QWidget* rightCard = new QWidget;
+    rightCard->setStyleSheet("background: #FFF8F0; border: 1px solid #D2B48C; border-radius: 15px;");
+    QVBoxLayout* rightLayout = new QVBoxLayout(rightCard);
 
-    QLabel* previewAreaTitle = new QLabel("相关诗歌内容");
-    previewAreaTitle->setStyleSheet("font-size: 16px; font-weight: bold; color: #4A3426;");
+    QLabel* previewTitle = new QLabel("· 诗卷预览 ·");
+    previewTitle->setStyleSheet("font-family: '楷体', 'KaiTi'; font-size: 18px; color: #8B4513;");
+    previewTitle->setAlignment(Qt::AlignCenter);
 
-    previewTitleLabel = new QLabel("点击右侧诗歌名称后显示");
-    previewTitleLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #4A3426;");
+    m_previewTitleLabel = new QLabel;
+    m_previewTitleLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #8B4513; font-family: '楷体', 'KaiTi';");
+    m_previewTitleLabel->setAlignment(Qt::AlignCenter);
+    m_previewTitleLabel->setText("点击右侧诗歌名称后显示");
 
-    previewAuthorLabel = new QLabel("");
-    previewAuthorLabel->setStyleSheet("font-size: 14px; color: #6B5B4D;");
+    m_previewContentText = new QTextEdit;
+    m_previewContentText->setReadOnly(true);
+    m_previewContentText->setPlaceholderText("这里将显示你点击的相关诗歌内容");
 
-    previewContentText = new QTextEdit;
-    previewContentText->setReadOnly(true);
-    previewContentText->setPlaceholderText("这里将显示你点击的相关诗歌内容");
+    rightLayout->addWidget(previewTitle);
+    rightLayout->addWidget(m_previewTitleLabel);
+    rightLayout->addWidget(m_previewContentText);
 
-    rightLayout->addWidget(previewAreaTitle);
-    rightLayout->addWidget(previewTitleLabel);
-    rightLayout->addWidget(previewAuthorLabel);
-    rightLayout->addWidget(previewContentText, 1);
+    mainLayout->addWidget(leftCard, 2);
+    mainLayout->addWidget(middleCard, 2);
+    mainLayout->addWidget(rightCard, 3);
 
-    // 三栏比例
-    mainLayout->addWidget(leftWidget, 2);
-    mainLayout->addWidget(middleWidget, 2);
-    mainLayout->addWidget(rightWidget, 3);
-
-    connect(categoryList, &QListWidget::itemClicked, this, &ImageryWindow::onCategoryClicked);
-    connect(categoryResultList, &QListWidget::itemClicked, this, &ImageryWindow::onCategoryResultClicked);
-    connect(similarList, &QListWidget::itemClicked, this, &ImageryWindow::onSimilarPoemClicked);
-    connect(similarButton, &QPushButton::clicked, this, &ImageryWindow::showMostSimilarPoems);
+    // 连接信号
+    connect(m_categoryList, &QListWidget::itemClicked, this, &ImageryWindow::onCategoryClicked);
+    connect(m_similarList, &QListWidget::itemClicked, this, &ImageryWindow::onSimilarPoemClicked);
+    connect(m_similarButton, &QPushButton::clicked, this, &ImageryWindow::showMostSimilarPoems);
 }
 
 void ImageryWindow::loadCurrentPoemInfo()
 {
-    titleLabel->setText("《" + m_currentPoem.title + "》");
-    contentText->setText(m_currentPoem.content);
+    m_titleLabel->setText("《" + m_currentPoem.title + "》");
+    m_authorLabel->setText(m_currentPoem.chapter + " · " + m_currentPoem.section);
+    m_contentText->setText(m_currentPoem.content);
 }
 
 void ImageryWindow::loadCategoryList()
 {
-    categoryList->clear();
+    m_categoryList->clear();
 
     QStringList categories = m_graph.getImageryCategoriesOfPoem(m_currentPoem);
     for (const QString& category : categories) {
-        categoryList->addItem(category);
+        m_categoryList->addItem(category);
     }
 }
 
@@ -138,29 +138,30 @@ void ImageryWindow::onCategoryClicked(QListWidgetItem* item)
     if (!item) return;
 
     QString category = item->text();
-    categoryResultList->clear();
 
     QList<int> poemIndexes = m_graph.findPoemsByCategory(category, m_currentPoem.id);
+
+    m_similarList->clear();
 
     for (int index : poemIndexes) {
         GraphVertex v = m_graph.vertex(index);
 
         QListWidgetItem* poemItem = new QListWidgetItem(v.title);
         poemItem->setData(Qt::UserRole, v.poemId);
-        categoryResultList->addItem(poemItem);
+        m_similarList->addItem(poemItem);
     }
 
     if (poemIndexes.isEmpty()) {
-        categoryResultList->addItem("没有找到相关诗歌");
+        m_similarList->addItem("没有找到相关诗歌");
     }
 }
 
 void ImageryWindow::showMostSimilarPoems()
 {
-    similarList->clear();
+    m_similarList->clear();
 
     if (m_currentIndex == -1) {
-        similarList->addItem("没有找到相关诗歌");
+        m_similarList->addItem("没有找到相关诗歌");
         return;
     }
 
@@ -171,23 +172,12 @@ void ImageryWindow::showMostSimilarPoems()
 
         QListWidgetItem* poemItem = new QListWidgetItem(v.title);
         poemItem->setData(Qt::UserRole, v.poemId);
-        similarList->addItem(poemItem);
+        m_similarList->addItem(poemItem);
     }
 
     if (edges.isEmpty()) {
-        similarList->addItem("没有找到相关诗歌");
+        m_similarList->addItem("没有找到相关诗歌");
     }
-}
-
-void ImageryWindow::onCategoryResultClicked(QListWidgetItem* item)
-{
-    if (!item) return;
-
-    QVariant data = item->data(Qt::UserRole);
-    if (!data.isValid()) return;
-
-    int poemId = data.toInt();
-    displayPoemPreviewById(poemId);
 }
 
 void ImageryWindow::onSimilarPoemClicked(QListWidgetItem* item)
@@ -207,13 +197,12 @@ void ImageryWindow::displayPoemPreviewById(int poemId)
 
     for (const Poem& poem : poems) {
         if (poem.id == poemId) {
-            previewTitleLabel->setText("《" + poem.title + "》");
-            previewContentText->setText(poem.content);
+            m_previewTitleLabel->setText("《" + poem.title + "》");
+            m_previewContentText->setText(poem.content);
             return;
         }
     }
 
-    previewTitleLabel->setText("未找到诗歌");
-    previewAuthorLabel->clear();
-    previewContentText->clear();
+    m_previewTitleLabel->setText("未找到诗歌");
+    m_previewContentText->clear();
 }

@@ -108,6 +108,9 @@
   <ItemGroup>
     <ClInclude Include="GraphView.h" />
     <ClInclude Include="ImageryGraph.h" />
+    <ClInclude Include="ChineseStyle.h" />
+    <QtMoc Include="InkDecor.h" />
+    <QtMoc Include="ScrollTitle.h" />
     <QtMoc Include="ImageryWindow.h" />
     <ClInclude Include="json.hpp" />
     <QtMoc Include="MainWindow.h" />
