@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="StatisticsData.cpp" />
     <ClCompile Include="TranslationManager.cpp" />
     <ClCompile Include="HistoryPage.cpp" />
     <ClCompile Include="OtherPage.cpp" />
@@ -102,6 +103,8 @@
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
     </ClCompile>
     <ClCompile Include="RecitePage.cpp" />
+    <ClCompile Include="WordCloudPage.cpp" />
+    <ClCompile Include="WordCloudWidget.cpp" />
     <QtRcc Include="QtWidgetsApplication.qrc" />
     <QtUic Include="MainWindow.ui" />
     <QtUic Include="QtWidgetsApplication.ui" />
@@ -116,7 +119,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="WordCloudPage.h" />
+    <QtMoc Include="WordCloudWidget.h" />
     <QtMoc Include="CategoryPage.h" />
+    <ClInclude Include="StatisticsData.h" />
     <ClInclude Include="TranslationManager.h" />
     <QtMoc Include="HistoryPage.h" />
     <QtMoc Include="HomePage.h" />

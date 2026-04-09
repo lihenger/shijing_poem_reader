@@ -31,6 +31,8 @@ public:
     QStack<int> getHistoryStack() const { return m_historyStack; }
     void addToHistory(int poemIndex);
 
+
+
 private slots:
     void onHomeClicked();
     void onSequentialReadClicked();

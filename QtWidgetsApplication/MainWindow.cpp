@@ -158,8 +158,10 @@ void MainWindow::initStackedPages()
     m_categoryPage = new CategoryPage(this);
     m_recitePage = new RecitePage(this);
     m_historyPage = new HistoryPage(this);
-    m_otherPage = new OtherPage(this);
+    m_otherPage = new OtherPage(this);  // 确保传递 this 作为父对象
     m_readingPage = new ReadingPage(this);
+    // 设置 OtherPage 的 MainWindow 引用
+    m_otherPage->setMainWindow(this);  // 添加这行
 
     m_categoryPage->setCategoryData(m_categoryPoems, m_categorySizes, m_categoryNames);
     m_recitePage->setReciteList(m_reciteList);
@@ -180,6 +182,7 @@ void MainWindow::initStackedPages()
     connect(m_readingPage, &ReadingPage::addToRecite, this, &MainWindow::addToReciteList);
     connect(m_readingPage, &ReadingPage::removeFromRecite, this, &MainWindow::removeFromReciteList);
     connect(m_readingPage, &ReadingPage::addToHistory, this, &MainWindow::addToHistory);
+    connect(m_otherPage, &OtherPage::openReadingPage, this, &MainWindow::enterReadingPage);
 
     // 新增：连接清空信号
     connect(m_recitePage, &RecitePage::reciteListCleared, this, [this]() {
@@ -212,6 +215,10 @@ void MainWindow::exitReadingPage()
     else if (m_previousPage == "history") {
         m_historyPage->refreshList();
         m_stackedWidget->setCurrentWidget(m_historyPage);
+    }
+    else if (m_previousPage == "other") {
+        m_otherPage->refreshData();
+        m_stackedWidget->setCurrentWidget(m_otherPage);
     }
     else {
         m_stackedWidget->setCurrentWidget(m_homePage);

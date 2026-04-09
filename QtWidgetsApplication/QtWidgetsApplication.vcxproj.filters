@@ -73,6 +73,15 @@
     <ClCompile Include="ReadingPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StatisticsData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WordCloudWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WordCloudPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Poem.h">
@@ -88,6 +97,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TranslationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StatisticsData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -127,6 +139,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="ImageryWindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="WordCloudPage.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="WordCloudWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
