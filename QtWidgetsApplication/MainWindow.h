@@ -13,6 +13,7 @@ class RecitePage;
 class HistoryPage;
 class OtherPage;
 class ReadingPage;
+class ReciteQuizPage;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -31,13 +32,12 @@ public:
     QStack<int> getHistoryStack() const { return m_historyStack; }
     void addToHistory(int poemIndex);
 
-
-
 private slots:
     void onHomeClicked();
     void onSequentialReadClicked();
     void onCategoryClicked();
-    void onReciteClicked();
+    void onReciteClicked();          // 原有背诵列表
+    void onReciteQuizClicked();      // 新增：背诵测验
     void onHistoryClicked();
     void onOtherClicked();
 
@@ -61,7 +61,8 @@ private:
     QPushButton* m_btnHome;
     QPushButton* m_btnSequentialRead;
     QPushButton* m_btnCategory;
-    QPushButton* m_btnRecite;
+    QPushButton* m_btnRecite;        // 原有背诵列表按钮
+    QPushButton* m_btnReciteQuiz;    // 新增：背诵测验按钮
     QPushButton* m_btnHistory;
     QPushButton* m_btnOther;
 
@@ -71,6 +72,7 @@ private:
     HistoryPage* m_historyPage;
     OtherPage* m_otherPage;
     ReadingPage* m_readingPage;
+    ReciteQuizPage* m_reciteQuizPage;
 
     QList<int> m_reciteList;
     QStack<int> m_historyStack;

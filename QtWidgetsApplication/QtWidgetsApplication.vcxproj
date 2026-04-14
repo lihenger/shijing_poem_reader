@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ReciteQuizPage.cpp" />
     <ClCompile Include="StatisticsData.cpp" />
     <ClCompile Include="TranslationManager.cpp" />
     <ClCompile Include="HistoryPage.cpp" />
@@ -122,6 +123,7 @@
     <QtMoc Include="WordCloudPage.h" />
     <QtMoc Include="WordCloudWidget.h" />
     <QtMoc Include="CategoryPage.h" />
+    <QtMoc Include="ReciteQuizPage.h" />
     <ClInclude Include="StatisticsData.h" />
     <ClInclude Include="TranslationManager.h" />
     <QtMoc Include="HistoryPage.h" />

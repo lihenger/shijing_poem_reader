@@ -82,6 +82,9 @@
     <ClCompile Include="WordCloudPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ReciteQuizPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Poem.h">
@@ -145,6 +148,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="WordCloudWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ReciteQuizPage.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

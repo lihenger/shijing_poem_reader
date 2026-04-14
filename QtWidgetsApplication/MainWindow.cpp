@@ -5,6 +5,7 @@
 #include "HistoryPage.h"
 #include "OtherPage.h"
 #include "ReadingPage.h"
+#include "ReciteQuizPage.h"
 #include "PoemManager.h"
 #include "ChineseStyle.h"
 #include <QHBoxLayout>
@@ -16,6 +17,7 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , m_categoryPoems(nullptr)
+    , m_reciteQuizPage(nullptr)
 {
     for (int i = 0; i < CATEGORY_COUNT; ++i) {
         m_categorySizes[i] = 0;
@@ -130,11 +132,13 @@ void MainWindow::initSidebar()
     m_btnHome = new QPushButton("🏠 首页");
     m_btnSequentialRead = new QPushButton("📖 顺序阅读");
     m_btnCategory = new QPushButton("📚 分类");
-    m_btnRecite = new QPushButton("📝 背诵");
+    m_btnRecite = new QPushButton("📝 背诵列表");      // 原有背诵列表
+    m_btnReciteQuiz = new QPushButton("🧠 背诵测验");   // 新增测验按钮
     m_btnHistory = new QPushButton("⏰ 历史");
     m_btnOther = new QPushButton("✨ 其他");
 
-    QList<QPushButton*> btns = { m_btnHome, m_btnSequentialRead, m_btnCategory, m_btnRecite, m_btnHistory, m_btnOther };
+    QList<QPushButton*> btns = { m_btnHome, m_btnSequentialRead, m_btnCategory,
+                                 m_btnRecite, m_btnReciteQuiz, m_btnHistory, m_btnOther };
     for (auto btn : btns) {
         btn->setFixedHeight(45);
         btn->setStyleSheet("QPushButton { background: transparent; color: #5C4B3A; text-align: left; padding-left: 20px; border-radius: 10px; }"
@@ -148,6 +152,7 @@ void MainWindow::initSidebar()
     connect(m_btnSequentialRead, &QPushButton::clicked, this, &MainWindow::onSequentialReadClicked);
     connect(m_btnCategory, &QPushButton::clicked, this, &MainWindow::onCategoryClicked);
     connect(m_btnRecite, &QPushButton::clicked, this, &MainWindow::onReciteClicked);
+    connect(m_btnReciteQuiz, &QPushButton::clicked, this, &MainWindow::onReciteQuizClicked);
     connect(m_btnHistory, &QPushButton::clicked, this, &MainWindow::onHistoryClicked);
     connect(m_btnOther, &QPushButton::clicked, this, &MainWindow::onOtherClicked);
 }
@@ -158,11 +163,11 @@ void MainWindow::initStackedPages()
     m_categoryPage = new CategoryPage(this);
     m_recitePage = new RecitePage(this);
     m_historyPage = new HistoryPage(this);
-    m_otherPage = new OtherPage(this);  // 确保传递 this 作为父对象
+    m_otherPage = new OtherPage(this);
     m_readingPage = new ReadingPage(this);
-    // 设置 OtherPage 的 MainWindow 引用
-    m_otherPage->setMainWindow(this);  // 添加这行
+    m_reciteQuizPage = new ReciteQuizPage(this);
 
+    m_otherPage->setMainWindow(this);
     m_categoryPage->setCategoryData(m_categoryPoems, m_categorySizes, m_categoryNames);
     m_recitePage->setReciteList(m_reciteList);
     m_historyPage->setHistoryStack(m_historyStack);
@@ -173,6 +178,7 @@ void MainWindow::initStackedPages()
     m_stackedWidget->addWidget(m_historyPage);
     m_stackedWidget->addWidget(m_otherPage);
     m_stackedWidget->addWidget(m_readingPage);
+    m_stackedWidget->addWidget(m_reciteQuizPage);
 
     connect(m_homePage, &HomePage::openReadingPage, this, &MainWindow::enterReadingPage);
     connect(m_categoryPage, &CategoryPage::openReadingPage, this, &MainWindow::enterReadingPage);
@@ -183,8 +189,10 @@ void MainWindow::initStackedPages()
     connect(m_readingPage, &ReadingPage::removeFromRecite, this, &MainWindow::removeFromReciteList);
     connect(m_readingPage, &ReadingPage::addToHistory, this, &MainWindow::addToHistory);
     connect(m_otherPage, &OtherPage::openReadingPage, this, &MainWindow::enterReadingPage);
+    connect(m_reciteQuizPage, &ReciteQuizPage::backToMain, this, [this]() {
+        m_stackedWidget->setCurrentWidget(m_homePage);
+        });
 
-    // 新增：连接清空信号
     connect(m_recitePage, &RecitePage::reciteListCleared, this, [this]() {
         m_reciteList.clear();
         });
@@ -229,26 +237,23 @@ void MainWindow::addToReciteList(int poemIndex)
 {
     if (!m_reciteList.contains(poemIndex)) {
         m_reciteList.append(poemIndex);
-        // 更新背诵页面
         m_recitePage->setReciteList(m_reciteList);
+        // 注意：测验页面不需要实时同步，因为它会在打开时从 m_reciteList 重新获取
     }
 }
 
 void MainWindow::removeFromReciteList(int poemIndex)
 {
     m_reciteList.removeAll(poemIndex);
-    // 更新背诵页面
     m_recitePage->setReciteList(m_reciteList);
 }
 
 void MainWindow::addToHistory(int poemIndex)
 {
-    // 避免重复添加相同的诗歌
     if (!m_historyStack.isEmpty() && m_historyStack.top() == poemIndex) {
         return;
     }
 
-    // 如果已经存在，先移除旧的
     QStack<int> temp;
     while (!m_historyStack.isEmpty()) {
         int top = m_historyStack.pop();
@@ -260,10 +265,8 @@ void MainWindow::addToHistory(int poemIndex)
         m_historyStack.push(temp.pop());
     }
 
-    // 添加到栈顶
     m_historyStack.push(poemIndex);
 
-    // 限制历史记录最大数量为50
     if (m_historyStack.size() > 50) {
         QStack<int> newStack;
         QList<int> tempList;
@@ -276,7 +279,6 @@ void MainWindow::addToHistory(int poemIndex)
         m_historyStack = newStack;
     }
 
-    // 更新历史页面
     m_historyPage->setHistoryStack(m_historyStack);
 }
 
@@ -302,8 +304,16 @@ void MainWindow::onCategoryClicked()
 
 void MainWindow::onReciteClicked()
 {
+    // 原有背诵列表功能：显示 RecitePage
     m_recitePage->refreshList();
     m_stackedWidget->setCurrentWidget(m_recitePage);
+}
+
+void MainWindow::onReciteQuizClicked()
+{
+    // 新测验功能：将当前背诵列表传递给测验页面，并切换到测验页面
+    m_reciteQuizPage->setReciteList(m_reciteList);
+    m_stackedWidget->setCurrentWidget(m_reciteQuizPage);
 }
 
 void MainWindow::onHistoryClicked()
