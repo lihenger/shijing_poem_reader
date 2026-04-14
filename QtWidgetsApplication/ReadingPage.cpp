@@ -35,25 +35,27 @@ ReadingPage::ReadingPage(QWidget* parent)
     QHBoxLayout* contentLayout = new QHBoxLayout();
     contentLayout->setSpacing(20);
 
-    // 左侧：阅读列表
+    // 左侧：阅读列表（宽度 150px）
     m_readingListWidget = new QListWidget();
-    m_readingListWidget->setFixedWidth(250);
+    m_readingListWidget->setFixedWidth(150);
     m_readingListWidget->setStyleSheet("QListWidget { background: #FFF8F0; border: 1px solid #D2B48C; border-radius: 10px; }"
         "QListWidget::item { padding: 10px; border-bottom: 1px solid #E8DCC8; }"
         "QListWidget::item:selected { background: #D2B48C; color: white; }");
     contentLayout->addWidget(m_readingListWidget);
 
-    // 中间：诗歌内容 + 翻译（可滚动区域）
+    // 中间：诗歌内容 + 翻译
     QWidget* centerWidget = new QWidget();
     QVBoxLayout* centerLayout = new QVBoxLayout(centerWidget);
     centerLayout->setSpacing(15);
 
+    // ========== 修改1：标题字体从 28px 改为 22px ==========
     m_poemTitle = new QLabel();
-    m_poemTitle->setStyleSheet("font-size: 28px; font-weight: bold; color: #8B4513; font-family: '楷体';");
+    m_poemTitle->setStyleSheet("font-size: 22px; font-weight: bold; color: #8B4513; font-family: '楷体';");
     m_poemTitle->setAlignment(Qt::AlignCenter);
 
+    // ========== 修改2：章节字体从 14px 改为 12px ==========
     m_poemChapter = new QLabel();
-    m_poemChapter->setStyleSheet("font-size: 14px; color: #A0522D;");
+    m_poemChapter->setStyleSheet("font-size: 12px; color: #A0522D;");
     m_poemChapter->setAlignment(Qt::AlignCenter);
 
     // 原文区域
@@ -63,10 +65,22 @@ ReadingPage::ReadingPage(QWidget* parent)
     QScrollArea* scrollArea = new QScrollArea();
     scrollArea->setWidgetResizable(true);
     scrollArea->setStyleSheet("QScrollArea { border: none; background: transparent; }");
+    // 外层 ScrollArea 的滚动条也隐藏
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     m_poemContent = new QTextEdit();
     m_poemContent->setReadOnly(true);
-    m_poemContent->setStyleSheet("QTextEdit { background: #FFFEF5; border: 1px solid #D2B48C; border-radius: 15px; padding: 20px; font-size: 18px; line-height: 2; }");
+
+    // ========== 修改3：隐藏 QTextEdit 内部的滚动条 ==========
+    m_poemContent->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_poemContent->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    // ========== 修改4：减少内边距，增加内容区域 ==========
+    m_poemContent->setStyleSheet(
+        "QTextEdit { background: #FFFEF5; border: 1px solid #D2B48C; "
+        "border-radius: 15px; padding: 20px 30px; }"
+    );
     scrollArea->setWidget(m_poemContent);
 
     // 翻译区域
@@ -78,7 +92,6 @@ ReadingPage::ReadingPage(QWidget* parent)
     m_translationContent->setStyleSheet("QTextEdit { background: #F5F0E8; border: 1px solid #D2B48C; border-radius: 15px; padding: 20px; font-size: 16px; line-height: 1.8; color: #3D2B1F; }");
     m_translationContent->setMaximumHeight(200);
 
-    // 添加所有组件到中间区域
     centerLayout->addWidget(m_poemTitle);
     centerLayout->addWidget(m_poemChapter);
     centerLayout->addWidget(originalLabel);
@@ -88,9 +101,9 @@ ReadingPage::ReadingPage(QWidget* parent)
 
     contentLayout->addWidget(centerWidget, 2);
 
-    // 右侧：意象 + 猜你喜欢
+    // 右侧：意象 + 猜你喜欢（宽度 150px）
     QWidget* rightWidget = new QWidget();
-    rightWidget->setFixedWidth(280);
+    rightWidget->setFixedWidth(150);
     QVBoxLayout* rightLayout = new QVBoxLayout(rightWidget);
 
     QLabel* imageryTitle = new QLabel("意象标签");
@@ -115,7 +128,7 @@ ReadingPage::ReadingPage(QWidget* parent)
 
     mainLayout->addLayout(contentLayout, 1);
 
-    // 底部按钮
+    // 底部按钮栏
     QHBoxLayout* bottomLayout = new QHBoxLayout();
     bottomLayout->setSpacing(20);
     bottomLayout->addStretch();
@@ -153,7 +166,6 @@ void ReadingPage::loadTranslation(int poemId)
         QString translation = transManager.getTranslation(poemId);
         QString appreciation = transManager.getAppreciation(poemId);
 
-        // 组合翻译和赏析
         QString content = translation;
         if (!appreciation.isEmpty()) {
             content += "\n\n【赏析】\n" + appreciation;
@@ -196,9 +208,20 @@ void ReadingPage::loadPoem(int index)
         const Poem& poem = poems[poemIdx];
         m_poemTitle->setText(poem.title);
         m_poemChapter->setText(poem.chapter + " · " + poem.section);
-        m_poemContent->setText(poem.content);
 
-        // 加载翻译
+        // 将换行符替换为 <br> 标签
+        QString content = poem.content;
+        content.replace("\n", "<br>");
+
+        // ========== 修改5：字体 22px，行距 2.0 ==========
+        QString styledContent = QString(
+            "<div style='text-align: center; font-family: \"楷体\", \"KaiTi\";'>"
+            "<p style='font-size: 22px; line-height: 2.0; text-indent: 2em; margin: 0 0 10px 0;'>%1</p>"
+            "</div>"
+        ).arg(content);
+
+        m_poemContent->setHtml(styledContent);
+
         loadTranslation(poem.id);
 
         emit addToHistory(poemIdx);
