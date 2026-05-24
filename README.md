@@ -1,1 +1,1 @@
-# QtWidgetsApplication
+# shijing_poem_reader
