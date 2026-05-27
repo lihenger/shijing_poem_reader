@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 #include <QMainWindow>
 #include <QStack>
 #include <QList>
@@ -36,10 +37,11 @@ private slots:
     void onHomeClicked();
     void onSequentialReadClicked();
     void onCategoryClicked();
-    void onReciteClicked();          // 原有背诵列表
-    void onReciteQuizClicked();      // 新增：背诵测验
+    void onReciteClicked();
+    void onReciteQuizClicked();
     void onHistoryClicked();
     void onOtherClicked();
+    void onRandomClicked();
 
 private:
     void initUI();
@@ -61,10 +63,11 @@ private:
     QPushButton* m_btnHome;
     QPushButton* m_btnSequentialRead;
     QPushButton* m_btnCategory;
-    QPushButton* m_btnRecite;        // 原有背诵列表按钮
-    QPushButton* m_btnReciteQuiz;    // 新增：背诵测验按钮
+    QPushButton* m_btnRecite;
+    QPushButton* m_btnReciteQuiz;
     QPushButton* m_btnHistory;
     QPushButton* m_btnOther;
+    QPushButton* m_btnRandom;
 
     HomePage* m_homePage;
     CategoryPage* m_categoryPage;
