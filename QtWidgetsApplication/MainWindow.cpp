@@ -13,6 +13,7 @@
 #include <QLabel>
 #include <QTreeWidget>
 #include <QHeaderView>
+#include <QRandomGenerator>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -132,13 +133,14 @@ void MainWindow::initSidebar()
     m_btnHome = new QPushButton("🏠 首页");
     m_btnSequentialRead = new QPushButton("📖 顺序阅读");
     m_btnCategory = new QPushButton("📚 分类");
-    m_btnRecite = new QPushButton("📝 背诵列表");      // 原有背诵列表
-    m_btnReciteQuiz = new QPushButton("🧠 背诵测验");   // 新增测验按钮
+    m_btnRecite = new QPushButton("📝 背诵列表");
+    m_btnReciteQuiz = new QPushButton("🧠 背诵测验");
     m_btnHistory = new QPushButton("⏰ 历史");
     m_btnOther = new QPushButton("✨ 其他");
+    m_btnRandom = new QPushButton("🎲 随机一首");
 
     QList<QPushButton*> btns = { m_btnHome, m_btnSequentialRead, m_btnCategory,
-                                 m_btnRecite, m_btnReciteQuiz, m_btnHistory, m_btnOther };
+                                 m_btnRecite, m_btnReciteQuiz, m_btnHistory, m_btnOther, m_btnRandom };
     for (auto btn : btns) {
         btn->setFixedHeight(45);
         btn->setStyleSheet("QPushButton { background: transparent; color: #5C4B3A; text-align: left; padding-left: 20px; border-radius: 10px; }"
@@ -155,6 +157,7 @@ void MainWindow::initSidebar()
     connect(m_btnReciteQuiz, &QPushButton::clicked, this, &MainWindow::onReciteQuizClicked);
     connect(m_btnHistory, &QPushButton::clicked, this, &MainWindow::onHistoryClicked);
     connect(m_btnOther, &QPushButton::clicked, this, &MainWindow::onOtherClicked);
+    connect(m_btnRandom, &QPushButton::clicked, this, &MainWindow::onRandomClicked);
 }
 
 void MainWindow::initStackedPages()
@@ -238,7 +241,6 @@ void MainWindow::addToReciteList(int poemIndex)
     if (!m_reciteList.contains(poemIndex)) {
         m_reciteList.append(poemIndex);
         m_recitePage->setReciteList(m_reciteList);
-        // 注意：测验页面不需要实时同步，因为它会在打开时从 m_reciteList 重新获取
     }
 }
 
@@ -304,14 +306,12 @@ void MainWindow::onCategoryClicked()
 
 void MainWindow::onReciteClicked()
 {
-    // 原有背诵列表功能：显示 RecitePage
     m_recitePage->refreshList();
     m_stackedWidget->setCurrentWidget(m_recitePage);
 }
 
 void MainWindow::onReciteQuizClicked()
 {
-    // 新测验功能：将当前背诵列表传递给测验页面，并切换到测验页面
     m_reciteQuizPage->setReciteList(m_reciteList);
     m_stackedWidget->setCurrentWidget(m_reciteQuizPage);
 }
@@ -325,4 +325,25 @@ void MainWindow::onHistoryClicked()
 void MainWindow::onOtherClicked()
 {
     m_stackedWidget->setCurrentWidget(m_otherPage);
+}
+
+// ==================== 随机推荐功能实现（唯一一处）====================
+void MainWindow::onRandomClicked()
+{
+    // 通过分类数据收集所有诗歌索引
+    QList<int> allPoemIndices;
+    for (int cat = 0; cat < CATEGORY_COUNT; ++cat) {
+        for (int i = 0; i < m_categorySizes[cat]; ++i) {
+            allPoemIndices.append(m_categoryPoems[cat][i]);
+        }
+    }
+
+    if (allPoemIndices.isEmpty()) {
+        return;
+    }
+
+    int randomIndex = QRandomGenerator::global()->bounded(allPoemIndices.size());
+    int poemIdx = allPoemIndices[randomIndex];
+    QList<int> readingList = { poemIdx };
+    enterReadingPage(readingList, 0, "home");
 }
